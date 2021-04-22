@@ -17,13 +17,13 @@ python sbshutdown.py --optional_parameters_from_below...
 ```
 
 ## Parameter
-| Parameter               | Type    |          | Meaning                                       |
-| ----------------------- | ------- | -------- | --------------------------------------------- |
-| `--help` or `-h`        | toggle  | optional | Show help text                                |
-| `--version` or `-v`     | toggle  | optional | Show version                                  |
-| `--port` or `-p`        | integer | optional | Port (default=8000)                           |                   
-| `--token` or `-t`       | toggle  | optional | Issue token (default=False)                   |                       
-| `--certificate` or `-c` | string  | optional | Server certificate file (default=server.pem)  |
+| Parameter               | Type    |          | Meaning                                      |
+| ----------------------- | ------- | -------- | -------------------------------------------- |
+| `--help` or `-h`        | toggle  | optional | Show help text                               |
+| `--version` or `-v`     | toggle  | optional | Show version                                 |
+| `--port` or `-p`        | integer | optional | Port (default=8010)                          |                   
+| `--token` or `-t`       | toggle  | optional | Issue token (default=False)                  |                       
+| `--certificate` or `-c` | string  | optional | Server certificate file (default=server.pem) |
 
 ### Example
 The call
@@ -40,7 +40,7 @@ There can only be exactly one token for one instance of StagyBeeShutdown at all 
 To force issuing a new token delete the file `token`.
 
 ---
-- **It is recommended to restrict access to the file `token` on file system level!**
+- **It is recommended to restrict access to the file `token/token` on file system level!**
 - **Keep received tokens in a safe place all the time!**
 - **It is not recommended using the parameter _--token_ permanently in production!**
 

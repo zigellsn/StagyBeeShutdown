@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 import argparse
 import os
 import random
@@ -41,7 +42,7 @@ class Token(Resource):
     isLeaf = True
 
     def render_GET(self, request):
-        input1 = input(f"{request.client} requsts a token. Grant access? [y/N]: ")
+        input1 = input(f"{request.client} requests a token. Grant access? [y/N]: ")
         if input1 == "y":
             request.setResponseCode(200)
             return __get_token__()
@@ -109,6 +110,13 @@ class Reboot(Resource):
 
 
 def main(reactor, port, issue_token, certificate):
+    if not exists("token"):
+        access_rights = 0o755
+        try:
+            os.mkdir("token", access_rights)
+        except OSError:
+            print("Creation of the directory 'token' failed")
+            exit()
     globalLogPublisher.addObserver(textFileLogObserver(sys.stdout))
     cert_data = getModule(__name__).filePath.sibling(certificate).getContent()
     certificate = ssl.PrivateCertificate.loadPEM(cert_data)
@@ -133,8 +141,8 @@ def __write_signal_file__(filename, mode):
 
 
 def __check_token__(token):
-    if exists("token"):
-        f = open("token", "rb")
+    if exists("token/token"):
+        f = open("token/token", "rb")
         my_token = f.read()
         f.close()
         if my_token == token and len(my_token) > 0:
@@ -143,8 +151,8 @@ def __check_token__(token):
 
 
 def __get_token__():
-    if exists("token"):
-        f = open("token", "rb")
+    if exists("token/token"):
+        f = open("token/token", "rb")
         token = f.read()
         f.close()
         if len(token) == 0:
@@ -158,7 +166,7 @@ def __create_token__():
     token = bytes("".join(random.SystemRandom().choice(
         string.ascii_lowercase + string.ascii_uppercase + string.punctuation + string.digits) for _ in range(64)),
                   "utf-8")
-    f = open("token", "wb")
+    f = open("token/token", "wb")
     f.write(token)
     f.close()
     return token
@@ -167,7 +175,7 @@ def __create_token__():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--version", help="Show version", action="store_true")
-    parser.add_argument("-p", "--port", help="Port", default=8000)
+    parser.add_argument("-p", "--port", help="Port", default=8010)
     parser.add_argument("-t", "--token", help="Issue token", action="store_true")
     parser.add_argument("-c", "--certificate", help="Server certificate file", default="server.pem")
     args = parser.parse_args()

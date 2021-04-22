@@ -310,6 +310,6 @@ $RECYCLE.BIN/
 # Custom
 *.pem
 *.http
-token
+token/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,venv,pycharm,windows,linux
