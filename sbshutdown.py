@@ -83,7 +83,7 @@ class Shutdown(Resource):
 class Reboot(Resource):
     isLeaf = True
 
-    def render_POST(request):
+    def render_POST(self, request):
         token = request.content.read()
         if not __check_token__(token):
             request.setResponseCode(401)
