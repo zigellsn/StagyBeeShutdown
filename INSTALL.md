@@ -22,14 +22,15 @@ source ./venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Issue a server certificate file (default file name is `server.pem`).
+Issue a server certificate file (default file names are `certs/cert.pem` and `certs/key.pem`). 
+If you don't issue a certificate yourself, one will be generated for you. This certificate will be valid for three days.
 
 ## Running in Docker Container
 
 ---
 **DO NOT USE SHUT DOWN SCRIPTS ON SERVERS THAT FUNCTION AS HOSTS FOR _REMOTE_ CLIENTS!**
 
-The shut down script should run on the client side only. Otherwise, a client could shut down the Server!
+The shut down script should run on the client side only. Otherwise, a client could shut down the server!
 
 Exception: Client = Server.
 
@@ -48,22 +49,24 @@ sudo systemctl start shutdown_stagybee.service
 sudo systemctl enable shutdown_stagybee.service
 ```
 
-Issue a server certificate file (default file name is `server.pem`) and place it in the same directory as the Dockerfile.
+Issue a server certificate file (default file names are `certs/cert.pem` and `certs/key.pem`). 
+If you don't issue a certificate yourself, one will be generated for you. This certificate will be valid for three days.
 
 ```
 mkdir token
+mkdir certs
 docker build python-base/ -t stagybee/python-base:slim
 docker build . -t stagybee/shutdown:slim
-docker run --name my_sdserver -it -p 8010:8010 --mount type=bind,source="$(pwd)"/token,target=/home/pyuser/token --mount type=bind,source="$(pwd)"/shutdown_signal,target=/home/pyuser/shutdown_signal stagybee/shutdown:slim -t
+docker run --name my_sdserver -it -p 8010:8010 --mount type=bind,source="$(pwd)"/token,target=/home/pyuser/token --mount type=bind,source="$(pwd)"/certs,target=/home/pyuser/certs --mount type=bind,source="$(pwd)"/shutdown_signal,target=/home/pyuser/shutdown_signal stagybee/shutdown:slim -t
 ```
 
 Connect to the shutdown server using `https://<ip>:<port>/token`. 
 Confirm the connection with 'y'. Exit the server programm with `Ctrl+C`.
-Don't forget to restrict access to directory `token`!
+Don't forget to restrict access to directories `token` and `certs`!
 
 Then run
 
 ```
 docker container rm my_sdserver 
-docker run --name my_sdserver -d -p 8010:8010 --restart always --mount type=bind,source="$(pwd)"/token,target=/home/pyuser/token --mount type=bind,source="$(pwd)"/shutdown_signal,target=/home/pyuser/shutdown_signal stagybee/shutdown:slim
+docker run --name my_sdserver -d -p 8010:8010 --restart always --mount type=bind,source="$(pwd)"/token,target=/home/pyuser/token --mount type=bind,source="$(pwd)"/certs,target=/home/pyuser/certs --mount type=bind,source="$(pwd)"/shutdown_signal,target=/home/pyuser/shutdown_signal stagybee/shutdown:slim
 ``` 

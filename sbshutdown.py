@@ -14,6 +14,7 @@
 
 import argparse
 import os
+import os.path
 import random
 import string
 import sys
@@ -23,9 +24,10 @@ from sys import platform
 
 from twisted.internet import ssl, task, defer, endpoints
 from twisted.logger import Logger, globalLogPublisher, textFileLogObserver
-from twisted.python.modules import getModule
 from twisted.web import server
 from twisted.web.resource import Resource
+
+from certificate import generate_self_signed_certificate
 
 log = Logger()
 
@@ -109,17 +111,9 @@ class Reboot(Resource):
         return b"Reboot in progress"
 
 
-def main(reactor, port, issue_token, certificate):
-    if not exists("token"):
-        access_rights = 0o755
-        try:
-            os.mkdir("token", access_rights)
-        except OSError:
-            print("Creation of the directory 'token' failed")
-            exit()
+def main(reactor, port, issue_token, certificate, keyfile):
+    cert = __prepare_server__(certificate, keyfile)
     globalLogPublisher.addObserver(textFileLogObserver(sys.stdout))
-    cert_data = getModule(__name__).filePath.sibling(certificate).getContent()
-    certificate = ssl.PrivateCertificate.loadPEM(cert_data)
 
     root = Simple()
     root.putChild(b"shutdown", Shutdown())
@@ -128,10 +122,47 @@ def main(reactor, port, issue_token, certificate):
         root.putChild(b"token", Token())
 
     site = server.Site(root)
-    endpoint = endpoints.SSL4ServerEndpoint(reactor, port, certificate.options())
+    endpoint = endpoints.SSL4ServerEndpoint(reactor, port, cert.options())
     endpoint.listen(site)
     reactor.run()
     return defer.Deferred()
+
+
+def __prepare_server__(certificate, keyfile):
+    __create_directory__("token")
+    __create_directory__("certs")
+    cert = __prepare_certificate__(certificate, keyfile)
+    return cert
+
+
+def __prepare_certificate__(certificate, keyfile):
+    cert_pem = None
+    key_pem = None
+    if (certificate is None or keyfile is None) and \
+            (not os.path.exists("certs/cert.pem") or not os.path.exists("certs/key.pem")):
+        (cert_pem, key_pem) = generate_self_signed_certificate("localhost", ip_addresses=["127.0.0.1"], key=None)
+    if certificate is None:
+        certificate = "certs/cert.pem"
+        if not os.path.exists(certificate):
+            open(certificate, "wb").write(cert_pem)
+    if keyfile is None:
+        keyfile = "certs/key.pem"
+        if not os.path.exists(keyfile):
+            open(keyfile, "wb").write(key_pem)
+    with open(keyfile, "r") as keyfile_data:
+        with open(certificate, "r") as cert_data:
+            cert = ssl.PrivateCertificate.loadPEM(keyfile_data.read() + cert_data.read())
+    return cert
+
+
+def __create_directory__(directory):
+    if not exists(directory):
+        access_rights = 0o755
+        try:
+            os.mkdir(directory, access_rights)
+        except OSError:
+            print(f"Creation of the directory '{directory}' failed")
+            exit()
 
 
 def __write_signal_file__(filename, mode):
@@ -177,7 +208,8 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--version", help="Show version", action="store_true")
     parser.add_argument("-p", "--port", help="Port", default=8010)
     parser.add_argument("-t", "--token", help="Issue token", action="store_true")
-    parser.add_argument("-c", "--certificate", help="Server certificate file", default="server.pem")
+    parser.add_argument("-c", "--certificate", help="Certificate file")
+    parser.add_argument("-k", "--keyfile", help="Private key file")
     args = parser.parse_args()
 
     if args.version:
@@ -185,4 +217,4 @@ if __name__ == "__main__":
         print("Copyright 2021 Simon Zigelli")
         exit()
 
-    task.react(main, (args.port, args.token, args.certificate))
+    task.react(main, (args.port, args.token, args.certificate, args.keyfile))
