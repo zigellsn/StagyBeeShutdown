@@ -18,7 +18,7 @@ python sbshutdown.py --optional_parameters_from_below...
 
 ## Parameter
 | Parameter               | Type    |          | Meaning                                          |
-| ----------------------- | ------- | -------- | ------------------------------------------------ |
+|-------------------------|---------|----------|--------------------------------------------------|
 | `--help` or `-h`        | toggle  | optional | Show help text                                   |
 | `--version` or `-v`     | toggle  | optional | Show version                                     |
 | `--port` or `-p`        | integer | optional | Port (default=8010)                              |                   
