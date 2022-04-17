@@ -1,4 +1,4 @@
-twisted==22.1.0
+twisted==22.4.0
 pyOpenSSL==22.0.0
 service_identity==21.1.0
-cryptography==36.0.1
+cryptography==36.0.2
