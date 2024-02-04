@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 
 # From https://gist.github.com/bloodearnest/9017111a313777b9cce5
 def generate_self_signed_certificate(hostname, ip_addresses=None, key=None):
-    """Generates self signed certificate for a hostname, and optional IP addresses."""
+    """Generates self-signed certificate for a hostname, and optional IP addresses."""
     from cryptography import x509
     from cryptography.x509.oid import NameOID
     from cryptography.hazmat.primitives import hashes
