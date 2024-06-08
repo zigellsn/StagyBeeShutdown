@@ -1,4 +1,4 @@
-FROM python:3.12.1-slim
+FROM python:3.12.3-slim
 
 ENV HOME /home/pyuser 
 RUN useradd --create-home pyuser
