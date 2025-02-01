@@ -1,4 +1,4 @@
-#  Copyright 2021-2024 Simon Zigelli
+#  Copyright 2021-2025 Simon Zigelli
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -214,7 +214,7 @@ if __name__ == "__main__":
 
     if args.version:
         print("StagyBeeShutdown 0.1.0-alpha01")
-        print("Copyright 2021 Simon Zigelli")
+        print("Copyright 2021-2025 Simon Zigelli")
         exit()
 
     task.react(main, (args.port, args.token, args.certificate, args.keyfile))
