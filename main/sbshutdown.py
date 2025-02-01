@@ -25,7 +25,7 @@ from sys import platform
 from twisted.internet import ssl, task, defer, endpoints
 from twisted.logger import Logger, globalLogPublisher, textFileLogObserver
 from twisted.web import server
-from twisted.web.resource import Resource
+from twisted.web.resource import Resource, IResource
 
 from certificate import generate_self_signed_certificate
 
