@@ -3,17 +3,8 @@
 A shutdown and reboot server for StagyBee clients 
 
 ## Staring the script
-*Windows*
 ```bash
-venv\Source\activate
-```
-*bash*
-```bash
-source ./venv/bin/activate
-```
-Then:
-```bash
-python sbshutdown.py --optional_parameters_from_below...
+uv run sbshutdown.py --optional_parameters_from_below...
 ```
 
 ## Parameter
@@ -29,7 +20,7 @@ python sbshutdown.py --optional_parameters_from_below...
 ### Example
 The call
 ```bash
-python sbshutdown.py --port=8080 --token
+uv run sbshutdown.py --port=8080 --token
 ```
 starts a new server listening to port 8080 and issuing tokens.
 

@@ -3,23 +3,20 @@
 ## Prerequisites
 
 - [Python 3](https://www.python.org/)
+- [uv](https://docs.astral.sh/uv/)
 
 ## Installation
 
 *Windows*
 
 ```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
+uv sync
 ```
 
 *bash*
 
 ```bash
-python -m venv venv
-source ./venv/bin/activate
-pip install -r requirements.txt
+uv sync
 ```
 
 Issue a server certificate file (default file names are `certs/cert.pem` and `certs/key.pem`). 
@@ -30,7 +27,7 @@ If you don't issue a certificate yourself, one will be generated for you. This c
 ---
 **DO NOT USE SHUT DOWN SCRIPTS ON SERVERS THAT FUNCTION AS HOSTS FOR _REMOTE_ CLIENTS!**
 
-The shut down script should run on the client side only. Otherwise, a client could shut down the server!
+The shutdown script should run on the client side only. Otherwise, a client could shut down the server!
 
 Exception: Client = Server.
 

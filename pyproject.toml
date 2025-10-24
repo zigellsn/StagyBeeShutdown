@@ -1,0 +1,11 @@
+[project]
+name = "stagybeeshutdown"
+version = "0.1.0-alpha01"
+description = "A shutdown and reboot server for StagyBee clients"
+requires-python = ">=3.14"
+dependencies = [
+    "twisted==25.5.0",
+    "pyOpenSSL==25.3.0",
+    "service-identity==24.2.0",
+    "cryptography==46.0.3"
+]

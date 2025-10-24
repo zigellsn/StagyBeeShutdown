@@ -4,12 +4,12 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV RUN_IN_CONTAINER 1
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r ./requirements.txt && \
-    rm -f ./requirements.txt
+RUN --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project
 
 COPY --chown=pyuser:users main ./
 
 USER pyuser
 
-ENTRYPOINT ["python", "/home/pyuser/sbshutdown.py"]
+ENTRYPOINT ["uv", "run", "/home/pyuser/sbshutdown.py"]
